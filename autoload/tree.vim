@@ -8,12 +8,13 @@ function! GetTree(buffer_numbers)
 
   for buffer_number in a:buffer_numbers
 
-    let file_path = split(expand("#" . string(buffer_number) . ":p"), g:buffertree_path_sep)
+    let file_path = expand("#" . string(buffer_number) . ":p")
+    let path_steps = split(file_path, g:buffertree_path_sep)
     let dir = tree
-    for step in file_path
+    for step in path_steps
 
       " check if this is the end
-      if len(file_path) == 1
+      if len(path_steps) == 1 && !isdirectory(file_path)
         let dir[step] = buffer_number
       else
         if !has_key(dir, step)
@@ -22,7 +23,7 @@ function! GetTree(buffer_numbers)
         let dir = dir[step]
       endif
 
-      let file_path = file_path[1:]
+      let path_steps = path_steps[1:]
 
     endfor
   endfor
